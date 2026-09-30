@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from relaygrid.restoration.sequence import CandidateStep, rank_steps
+from relaygrid.restoration.adaptive import AdaptiveRestorationPlanner
 from relaygrid.loads.priority import LoadBlock, select_to_serve
 from relaygrid.der.islanding import Resource, assess_island
 
@@ -18,6 +19,9 @@ class RestorationService:
         island_load=sum(served.values())
         island=assess_island(island_load,list(request.resources)) if request.resources else None
         return {"served":served,"switching":[s.branch_id for s in ranked],"island":island}
+    def adaptive_plan(self,request: RestorationRequest, at_h: float=0.0):
+        planner=AdaptiveRestorationPlanner(request.capacity_kw)
+        return planner.plan(list(request.switching_candidates),at_h)
     def unserved_kw(self,request: RestorationRequest):
         plan=self.plan(request); demand=sum(max(0.0,b.kw*b.cold_load_multiplier) for b in request.load_blocks)
         return max(0.0,demand-sum(plan["served"].values()))

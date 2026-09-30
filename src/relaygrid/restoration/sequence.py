@@ -7,6 +7,9 @@ class CandidateStep:
     restored_customers: int
     risk: float
     remote: bool
+    base_kw: float | None=None
+    customer_type: str="unknown"
+    outage_h: float=0.0
 
 def rank_steps(steps: list[CandidateStep]):
     def score(s):
