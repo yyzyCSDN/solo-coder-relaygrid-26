@@ -1,5 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from relaygrid.loads.cold_load import CustomerType
+
 @dataclass(frozen=True)
 class LoadBlock:
     block_id: str
@@ -7,6 +9,7 @@ class LoadBlock:
     priority: int
     min_service_kw: float=0.0
     cold_load_multiplier: float=1.0
+    customer_type: CustomerType=CustomerType.UNKNOWN
 
 def select_to_serve(blocks: list[LoadBlock], capacity_kw: float):
     remaining=max(0.0,capacity_kw); served={}
